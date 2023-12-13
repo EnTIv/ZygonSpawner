@@ -1,7 +1,7 @@
 package com.entiv.zygonspawner
 
-import com.entiv.core.module.PluginModule
-import com.entiv.core.plugin.plugin
+import com.entiv.core.common.module.PluginModule
+import com.entiv.core.common.plugin.plugin
 import org.bukkit.NamespacedKey
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

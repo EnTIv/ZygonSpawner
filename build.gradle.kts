@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 
 val exposedVersion = "0.40.1"
-
 plugins {
     kotlin("jvm") version "1.9.21"
     `maven-publish`
@@ -10,8 +9,7 @@ plugins {
 }
 
 group = "com.entiv"
-version = "1.0.4"
-
+version = "1.0.0"
 
 repositories {
     mavenLocal()
@@ -26,16 +24,9 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation("com.entiv:InsekiCore:1.2.3")
+    implementation("com.entiv.InsekiCore:module-common:2.0.0")
 
-    compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion")
-    compileOnly("org.jetbrains.exposed:exposed-dao:$exposedVersion")
-    compileOnly("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
-    compileOnly("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
-
-    compileOnly("me.clip:placeholderapi:2.11.0")
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
-    compileOnly("com.zaxxer:HikariCP:5.0.1")
+    compileOnly("org.jetbrains.kotlin:kotlin-reflect:${getKotlinPluginVersion()}")
     compileOnly("org.purpurmc.purpur:purpur-api:1.19.2-R0.1-SNAPSHOT")
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.12.1")
 }
@@ -47,13 +38,8 @@ tasks.shadowJar {
     }
 
     archiveFileName.set("${project.name}-${project.version}.jar")
-    relocate("com.entiv.core", "${rootProject.group}.${rootProject.name.toLowerCase()}.lib.core")
+    relocate("com.entiv.core", "${project.group}.${project.name.toLowerCase()}.lib.core")
     println("导出路径: ${destinationDirectory.get()}")
-    println("")
-
-    exclude("org/intellij/lang/**")
-    exclude("org/jetbrains/annotations/**")
-    exclude("kotlin/**")
 }
 
 tasks.test {
@@ -65,19 +51,13 @@ kotlin {
 }
 
 bukkit {
-    main = "com.entiv.${rootProject.name.toLowerCase()}.${project.name}"
+    main = "com.entiv.${project.name.toLowerCase()}.${project.name}Plugin"
     author = "EnTIv"
     version = project.version.toString()
     apiVersion = "1.13"
     libraries = listOf(
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${getKotlinPluginVersion()}",
         "org.jetbrains.kotlin:kotlin-reflect:${getKotlinPluginVersion()}",
-        "org.jetbrains.exposed:exposed-core:$exposedVersion",
-        "org.jetbrains.exposed:exposed-dao:$exposedVersion",
-        "org.jetbrains.exposed:exposed-jdbc:$exposedVersion",
-        "org.jetbrains.exposed:exposed-java-time:$exposedVersion",
-        "com.zaxxer:HikariCP:5.0.1",
-        "com.h2database:h2:2.2.224"
     )
     softDepend = listOf(
         "Vault",

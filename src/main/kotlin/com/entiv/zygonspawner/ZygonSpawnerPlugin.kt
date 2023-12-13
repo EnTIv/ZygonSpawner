@@ -1,10 +1,11 @@
 package com.entiv.zygonspawner
 
-import com.entiv.core.lang.sendMessage
-import com.entiv.core.plugin.InsekiPlugin
+
+import com.entiv.core.common.message.sendMessage
+import com.entiv.core.common.plugin.InsekiPlugin
 import org.bukkit.Bukkit
 
-class ZygonSpawner : InsekiPlugin() {
+class ZygonSpawnerPlugin : InsekiPlugin() {
 
     override fun onEnabled() {
         val message = arrayOf(
