@@ -1,5 +1,6 @@
 package com.entiv.zygonspawner.spawner
 
+import com.entiv.core.common.message.varTag
 import com.entiv.zygonspawner.SpawnerData
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -13,8 +14,8 @@ import kotlin.reflect.full.isSubclassOf
 
 class ZygonSpawner(
     val id: String,
-    val name: Component,
-    val lore: List<Component>,
+    val name: String,
+    val lore: List<String>,
     val minCount: Int,
     val maxCount: Int,
     val weight: Map<EntityType, Double>
@@ -45,14 +46,9 @@ class ZygonSpawner(
         fun fromSection(section: ConfigurationSection): ZygonSpawner {
             val durability = parseDurability(section.getString("durability") ?: error("${section.name} 耐久度配置错误"))
             val entityWeights = parseEntityWeights(section.getStringList("刷怪笼类型"))
-            val miniMessage = MiniMessage.miniMessage()
 
-            val name = section.getString("name", "普通刷怪笼")!!.let {
-                miniMessage.deserialize(it)
-            }
-            val lore = section.getStringList("lore").let { list ->
-                list.mapNotNull { miniMessage.deserialize(it,Message) }
-            }
+            val name = section.getString("name", "普通刷怪笼")!!
+            val lore = section.getStringList("lore")
 
             return ZygonSpawner(section.name, name, lore, durability.first, durability.second, entityWeights)
         }
