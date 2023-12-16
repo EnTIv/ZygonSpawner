@@ -4,7 +4,6 @@ import com.entiv.core.common.kit.ItemBuilder
 import com.entiv.core.common.message.varTag
 import com.entiv.zygonspawner.spawner.SpawnerManager
 import de.tr7zw.nbtapi.NBT
-import de.tr7zw.nbtapi.NBTCompound
 import de.tr7zw.nbtapi.NBTTileEntity
 import de.tr7zw.nbtapi.iface.ReadWriteNBT
 import de.tr7zw.nbtapi.iface.ReadableNBT
@@ -12,10 +11,11 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.block.BlockState
+import org.bukkit.block.TileState
 import org.bukkit.entity.EntityType
 import org.bukkit.inventory.ItemStack
 
-class SpawnerData(val id: String, val type: EntityType, val count: Int) {
+class SpawnerData(val id: String, val type: EntityType, var count: Int) {
 
     fun writeToItem(itemStack: ItemStack) {
         NBT.modify(itemStack) {
@@ -23,7 +23,7 @@ class SpawnerData(val id: String, val type: EntityType, val count: Int) {
         }
     }
 
-    fun writeToBlock(blockState: BlockState) {
+    fun writeToBlock(blockState: TileState) {
         NBT.modify(blockState) {
             writeToNBT(it)
         }
@@ -70,7 +70,7 @@ class SpawnerData(val id: String, val type: EntityType, val count: Int) {
         fun fromItemStack(itemStack: ItemStack): SpawnerData? =
             fromNBT(NBT.readNbt(itemStack))
 
-        fun fromBlock(block: Block): SpawnerData? =
-            fromNBT(NBTTileEntity(block.state))
+        fun fromBlockState(state: TileState): SpawnerData? =
+            fromNBT(NBTTileEntity(state))
     }
 }

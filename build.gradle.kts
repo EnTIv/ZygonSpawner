@@ -25,6 +25,7 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation("com.entiv.InsekiCore:module-common:2.0.0")
+    implementation("com.entiv.InsekiCore:module-command:2.0.0")
 
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:${getKotlinPluginVersion()}")
     compileOnly("org.purpurmc.purpur:purpur-api:1.19.2-R0.1-SNAPSHOT")

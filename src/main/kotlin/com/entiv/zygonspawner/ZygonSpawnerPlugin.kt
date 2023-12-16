@@ -1,21 +1,26 @@
 package com.entiv.zygonspawner
 
 
+import com.entiv.core.command.DefaultCommand
 import com.entiv.core.common.message.sendMessage
+import com.entiv.core.common.module.ModuleManager
 import com.entiv.core.common.plugin.InsekiPlugin
+import com.entiv.zygonspawner.commands.GiveCommand
+import com.entiv.zygonspawner.spawner.SpawnerManager
 import org.bukkit.Bukkit
 
 class ZygonSpawnerPlugin : InsekiPlugin() {
 
     override fun onEnabled() {
-        val message = arrayOf(
-            "&e" + name + "&a 插件&e v" + description.version + " &a已卸载",
-            "&a插件制作作者:&e EnTIv &aQQ群:&e 600731934",
-            "",
-            "&a免费答疑，插件定制，功能请求，合作交流，联系QQ: &e1522935501",
-            "&a爱发电主页：&e&nhttps://afdian.net/a/EnTIv"
-        )
+        sendAdvertisement(true)
 
-        Bukkit.getConsoleSender().sendMessage(message)
+        DefaultCommand.register()
+        GiveCommand.give.register()
+
+        ModuleManager.load(SpawnerManager)
+    }
+
+    override fun onDisabled() {
+        sendAdvertisement(false)
     }
 }
