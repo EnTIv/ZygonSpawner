@@ -28,11 +28,16 @@ dependencies {
     implementation("com.entiv.InsekiCore:module-command:2.0.0")
 
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:${getKotlinPluginVersion()}")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${getKotlinPluginVersion()}")
     compileOnly("org.purpurmc.purpur:purpur-api:1.19.2-R0.1-SNAPSHOT")
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.12.1")
 }
 
 tasks.shadowJar {
+    project.findProperty("outputPath")?.let {
+        val outputPath = it.toString()
+        destinationDirectory.set(file(outputPath))
+    }
 
     project.findProperty("outputPath")?.let {
         destinationDirectory.set(file(it.toString()))

@@ -9,11 +9,12 @@ import de.tr7zw.nbtapi.iface.ReadWriteNBT
 import de.tr7zw.nbtapi.iface.ReadableNBT
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
-import org.bukkit.block.Block
-import org.bukkit.block.BlockState
+import org.bukkit.block.CreatureSpawner
 import org.bukkit.block.TileState
 import org.bukkit.entity.EntityType
 import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.BlockStateMeta
+
 
 class SpawnerData(val id: String, val type: EntityType, var count: Int) {
 
@@ -48,6 +49,14 @@ class SpawnerData(val id: String, val type: EntityType, var count: Int) {
             .name(name)
             .lore(lore)
             .build()
+
+        val itemMeta = itemStack.itemMeta
+        val blockStateMeta = itemMeta as BlockStateMeta
+        val creatureSpawner = blockStateMeta.blockState as CreatureSpawner
+
+        creatureSpawner.spawnedType = type
+        blockStateMeta.blockState = creatureSpawner
+        itemStack.itemMeta = itemMeta
 
         writeToItem(itemStack)
 

@@ -1,6 +1,5 @@
 package com.entiv.zygonspawner
 
-
 import com.entiv.core.command.DefaultCommand
 import com.entiv.core.common.message.sendMessage
 import com.entiv.core.common.module.ModuleManager
@@ -10,8 +9,8 @@ import com.entiv.zygonspawner.spawner.SpawnerManager
 import org.bukkit.Bukkit
 
 class ZygonSpawnerPlugin : InsekiPlugin() {
-
     override fun onEnabled() {
+        saveDefaultConfig(true)
         sendAdvertisement(true)
 
         DefaultCommand.register()
