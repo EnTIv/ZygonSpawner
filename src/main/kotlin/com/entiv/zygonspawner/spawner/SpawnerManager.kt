@@ -64,6 +64,8 @@ object SpawnerManager : PluginModule, Listener {
         val state = block.state as? TileState ?: return
         val spawnerData = SpawnerData.fromBlockState(state) ?: return
         val itemStack = spawnerData.toItemStack()
+
+
         val world = block.world
         world.dropItem(block.location, itemStack)
         event.isCancelled = true
