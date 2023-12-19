@@ -22,11 +22,13 @@ repositories {
 }
 
 val exposedVersion = "0.40.1"
+val coreVersion = "2.0.1"
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation("com.entiv.InsekiCore:module-common:2.0.0")
-    implementation("com.entiv.InsekiCore:module-command:2.0.0")
+    implementation("com.entiv.InsekiCore:module-common:$coreVersion")
+    implementation("com.entiv.InsekiCore:module-command:$coreVersion")
+    implementation("com.entiv.InsekiCore:module-exposed:$coreVersion")
 
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:${getKotlinPluginVersion()}")
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${getKotlinPluginVersion()}")
@@ -43,10 +45,6 @@ tasks.shadowJar {
     project.findProperty("outputPath")?.let {
         val outputPath = it.toString()
         destinationDirectory.set(file(outputPath))
-    }
-
-    project.findProperty("outputPath")?.let {
-        destinationDirectory.set(file(it.toString()))
     }
 
     archiveFileName.set("${project.name}-${project.version}.jar")
@@ -71,6 +69,11 @@ bukkit {
         "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${getKotlinPluginVersion()}",
         "org.jetbrains.kotlin:kotlin-reflect:${getKotlinPluginVersion()}",
         "com.zaxxer:HikariCP:5.0.1",
+        "org.jetbrains.exposed:exposed-core:$exposedVersion",
+        "org.jetbrains.exposed:exposed-dao:$exposedVersion",
+        "org.jetbrains.exposed:exposed-jdbc:$exposedVersion",
+        "org.jetbrains.exposed:exposed-java-time:$exposedVersion",
+        "com.h2database:h2:2.2.224",
     )
     softDepend = listOf(
         "Vault",

@@ -1,4 +1,4 @@
-package com.entiv.zygonspawner
+package com.entiv.zygonspawner.data
 
 import com.entiv.core.common.kit.ItemBuilder
 import com.entiv.core.common.message.varTag
@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BlockStateMeta
 
 
-class SpawnerData(val id: String, val type: EntityType, var count: Int) {
+class SpawnerData(val name: String, val type: EntityType, var count: Int) {
 
     fun writeToItem(itemStack: ItemStack) {
         NBT.modify(itemStack) {
@@ -32,17 +32,17 @@ class SpawnerData(val id: String, val type: EntityType, var count: Int) {
 
     private fun writeToNBT(nbt: ReadWriteNBT) {
         val compound = nbt.getOrCreateCompound("ZygonSpawner")
-        compound.setString("id", id)
+        compound.setString("id", name)
         compound.setString("type", type.name)
         compound.setInteger("count", count)
     }
 
     fun toItemStack(): ItemStack {
-        val zygonSpawner = SpawnerManager.findZygonSpawner(id) ?: error("无法获取到刷怪笼 $id")
+        val zygonSpawner = SpawnerManager.findZygonSpawner(name) ?: error("无法获取到刷怪笼 $name")
         val miniMessage = MiniMessage.miniMessage()
-        val name = miniMessage.deserialize(zygonSpawner.name)
+        val name = miniMessage.deserialize(zygonSpawner.name, varTag("刷怪次数", count, "类型", type))
         val lore = zygonSpawner.lore.map {
-            miniMessage.deserialize(it, varTag("耐久", count, "类型", type))
+            miniMessage.deserialize(it, varTag("刷怪次数", count, "类型", type))
         }
 
         val itemStack = ItemBuilder(Material.SPAWNER)
@@ -66,7 +66,6 @@ class SpawnerData(val id: String, val type: EntityType, var count: Int) {
     companion object {
 
         private fun fromNBT(nbt: ReadableNBT): SpawnerData? {
-
             val compound = nbt.getCompound("ZygonSpawner") ?: return null
             val id = compound.getString("id") ?: return null
             val type = compound.getString("type") ?: return null

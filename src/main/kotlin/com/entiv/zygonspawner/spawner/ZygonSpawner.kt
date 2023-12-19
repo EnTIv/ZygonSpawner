@@ -1,7 +1,7 @@
 package com.entiv.zygonspawner.spawner
 
 import com.entiv.core.common.debug.debug
-import com.entiv.zygonspawner.SpawnerData
+import com.entiv.zygonspawner.data.SpawnerData
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
@@ -43,7 +43,7 @@ class ZygonSpawner(
 
     companion object {
         fun fromSection(section: ConfigurationSection): ZygonSpawner {
-            val count = parseCount(section.getString("刷怪次数") ?: error("${section.name} 耐久度配置错误"))
+            val count = parseCount(section.getString("刷怪次数") ?: error("${section.name} 刷怪次数度配置错误"))
             val entityWeights = parseEntityWeights(section.getStringList("刷怪笼类型"))
 
             val name = section.getString("name", "普通刷怪笼")!!
