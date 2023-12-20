@@ -10,7 +10,7 @@ import com.entiv.zygonspawner.storage.ExposedManager
 
 class ZygonSpawnerPlugin : InsekiPlugin() {
     override fun onEnabled() {
-        saveDefaultConfig(true)
+        saveDefaultConfig(false)
         sendAdvertisement(true)
 
         DefaultCommand.register()

@@ -2,11 +2,13 @@ package com.entiv.zygonspawner.data
 
 import com.entiv.core.common.kit.ItemBuilder
 import com.entiv.core.common.message.varTag
+import com.entiv.core.common.utils.translatable
 import com.entiv.zygonspawner.spawner.SpawnerManager
 import de.tr7zw.nbtapi.NBT
 import de.tr7zw.nbtapi.NBTTileEntity
 import de.tr7zw.nbtapi.iface.ReadWriteNBT
 import de.tr7zw.nbtapi.iface.ReadableNBT
+import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
 import org.bukkit.Material
 import org.bukkit.block.CreatureSpawner
@@ -42,7 +44,7 @@ class SpawnerData(val name: String, val type: EntityType, var count: Int) {
         val miniMessage = MiniMessage.miniMessage()
         val name = miniMessage.deserialize(zygonSpawner.name, varTag("刷怪次数", count, "类型", type))
         val lore = zygonSpawner.lore.map {
-            miniMessage.deserialize(it, varTag("刷怪次数", count, "类型", type))
+            miniMessage.deserialize(it, varTag("刷怪次数", count, "类型", Component.translatable(type.translationKey())))
         }
 
         val itemStack = ItemBuilder(Material.SPAWNER)
