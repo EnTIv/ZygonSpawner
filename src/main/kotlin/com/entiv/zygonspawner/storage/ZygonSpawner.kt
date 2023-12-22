@@ -7,6 +7,7 @@ import com.entiv.core.exposed.transaction
 import com.entiv.zygonspawner.block.SpawnerBlock
 import com.entiv.zygonspawner.data.SpawnerData
 import org.bukkit.Location
+import org.bukkit.block.CreatureSpawner
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -20,18 +21,31 @@ object SpawnerBlockTable : IntIdTable() {
 
     val name = varchar("name", 32)
     val entityType = entityType("entityType")
-    val count = integer("count")
+    val totalCount = integer("totalCount")
     val location = location("location").uniqueIndex()
 }
 
 class SpawnerBlockEntity(id: EntityID<Int>) : IntEntity(id) {
     var name by SpawnerBlockTable.name
     var type by SpawnerBlockTable.entityType
-    var count by SpawnerBlockTable.count
+    var totalCount by SpawnerBlockTable.totalCount
     var location by SpawnerBlockTable.location
 
     fun toSpawnerBlock(): SpawnerBlock {
-        val spawnerData = SpawnerData(name, type, count)
+        val creatureSpawner = location.block.state as CreatureSpawner
+
+        val spawnerData = SpawnerData(
+            name = name,
+            type = type,
+            totalCount = totalCount,
+            minSpawnDelay = creatureSpawner.minSpawnDelay,
+            maxSpawnDelay = creatureSpawner.maxSpawnDelay,
+            spawnCount = creatureSpawner.spawnCount,
+            maxNearbyEntities = creatureSpawner.maxNearbyEntities,
+            requiredPlayerRange = creatureSpawner.requiredPlayerRange,
+            spawnRange = creatureSpawner.spawnRange
+        )
+
         return SpawnerBlock(spawnerData, location)
     }
 
@@ -44,7 +58,7 @@ class SpawnerBlockEntity(id: EntityID<Int>) : IntEntity(id) {
             return SpawnerBlockEntity.new {
                 this.name = spawnerBlock.name
                 this.type = spawnerBlock.type
-                this.count = spawnerBlock.count
+                this.totalCount = spawnerBlock.totalCount
                 this.location = spawnerBlock.location
             }
         }
@@ -52,12 +66,12 @@ class SpawnerBlockEntity(id: EntityID<Int>) : IntEntity(id) {
         fun save(spawnerBlock: SpawnerBlock): SpawnerBlockEntity? {
             val entity = find(spawnerBlock.location) ?: create(spawnerBlock)
 
-            if (entity.count <= 0) {
+            if (entity.totalCount <= 0) {
                 entity.delete()
                 return null
             }
 
-            entity.count = spawnerBlock.count
+            entity.totalCount = spawnerBlock.totalCount
 
             return entity
         }
@@ -78,7 +92,7 @@ object SpawnerBlockDao {
         return CompletableFuture.supplyAsync {
             transaction {
                 SpawnerBlockEntity.all().map {
-                    if (it.count <= 0) {
+                    if (it.totalCount <= 0) {
                         it.delete()
                     }
                     it.toSpawnerBlock()

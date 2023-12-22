@@ -62,10 +62,10 @@ object SpawnerBlockManager : PluginModule, Listener {
         val spawner = findSpawnerBlock(event.spawner.location) ?: return
         val data = spawner.spawnerData
 
-        debug("刷怪笼计数 ${data.count} - 1")
-        data.count -= 1
+        debug("刷怪笼计数 ${data.totalCount} - 1")
+        data.totalCount -= 1
 
-        if (data.count == 0) {
+        if (data.totalCount == 0) {
             event.spawner.type = Material.AIR
         }
     }
