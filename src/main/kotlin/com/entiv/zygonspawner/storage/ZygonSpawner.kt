@@ -13,7 +13,6 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 
 import org.jetbrains.exposed.dao.id.IntIdTable
-import java.util.Collections
 import java.util.concurrent.CompletableFuture
 
 object SpawnerBlockTable : IntIdTable() {
@@ -31,19 +30,27 @@ class SpawnerBlockEntity(id: EntityID<Int>) : IntEntity(id) {
     var totalCount by SpawnerBlockTable.totalCount
     var location by SpawnerBlockTable.location
 
-    fun toSpawnerBlock(): SpawnerBlock {
-        val creatureSpawner = location.block.state as CreatureSpawner
+    fun toSpawnerBlock(): SpawnerBlock? {
+        val spawner = location.block.state as? CreatureSpawner ?: let {
+            it.delete()
+            return null
+        }
+
+        if (totalCount <= 0) {
+            delete()
+            return null
+        }
 
         val spawnerData = SpawnerData(
             name = name,
             type = type,
             totalCount = totalCount,
-            minSpawnDelay = creatureSpawner.minSpawnDelay,
-            maxSpawnDelay = creatureSpawner.maxSpawnDelay,
-            spawnCount = creatureSpawner.spawnCount,
-            maxNearbyEntities = creatureSpawner.maxNearbyEntities,
-            requiredPlayerRange = creatureSpawner.requiredPlayerRange,
-            spawnRange = creatureSpawner.spawnRange
+            minSpawnDelay = spawner.minSpawnDelay,
+            maxSpawnDelay = spawner.maxSpawnDelay,
+            spawnCount = spawner.spawnCount,
+            maxNearbyEntities = spawner.maxNearbyEntities,
+            requiredPlayerRange = spawner.requiredPlayerRange,
+            spawnRange = spawner.spawnRange
         )
 
         return SpawnerBlock(spawnerData, location)
@@ -91,10 +98,7 @@ object SpawnerBlockDao {
     fun loadAll(): CompletableFuture<Collection<SpawnerBlock>> {
         return CompletableFuture.supplyAsync {
             transaction {
-                SpawnerBlockEntity.all().map {
-                    if (it.totalCount <= 0) {
-                        it.delete()
-                    }
+                SpawnerBlockEntity.all().mapNotNull {
                     it.toSpawnerBlock()
                 }
             }

@@ -1,6 +1,7 @@
 package com.entiv.zygonspawner.block
 
 import com.entiv.core.common.debug.debug
+import com.entiv.core.common.kit.submit
 import com.entiv.core.common.module.PluginModule
 import com.entiv.zygonspawner.data.SpawnerData
 import com.entiv.zygonspawner.storage.SpawnerBlockDao
@@ -35,9 +36,7 @@ object SpawnerBlockManager : PluginModule, Listener {
     @EventHandler(ignoreCancelled = true)
     private fun onPlace(event: BlockPlaceEvent) {
         val itemStack = event.itemInHand
-        debug("使用物品 $itemStack")
         val spawnerData = SpawnerData.fromItemStack(itemStack) ?: return
-        debug("结果 $spawnerData")
         val block = event.block
         val spawnerBlock = SpawnerBlock(spawnerData, block.location)
 
@@ -62,11 +61,14 @@ object SpawnerBlockManager : PluginModule, Listener {
         val spawner = findSpawnerBlock(event.spawner.location) ?: return
         val data = spawner.spawnerData
 
-        debug("刷怪笼计数 ${data.totalCount} - 1")
         data.totalCount -= 1
 
-        if (data.totalCount == 0) {
-            event.spawner.type = Material.AIR
+        if (data.totalCount <= 0) {
+            event.isCancelled = true
+            debug("刷怪计数: ${data.totalCount}")
+            submit {
+                event.spawner.block.type = Material.AIR
+            }
         }
     }
 

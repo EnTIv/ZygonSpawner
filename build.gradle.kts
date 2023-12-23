@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.entiv"
-version = "1.0.0"
+version = "1.0.1"
 
 repositories {
     mavenLocal()
@@ -32,7 +32,7 @@ dependencies {
 
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:${getKotlinPluginVersion()}")
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${getKotlinPluginVersion()}")
-    compileOnly("org.purpurmc.purpur:purpur-api:1.19.2-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("de.tr7zw:item-nbt-api-plugin:2.12.1")
 
     compileOnly("org.jetbrains.exposed:exposed-core:$exposedVersion")

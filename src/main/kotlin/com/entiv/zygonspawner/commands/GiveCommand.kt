@@ -14,7 +14,7 @@ object GiveCommand {
         description = "给予玩家指定类型的刷怪笼"
         parent(DefaultCommand.root)
         arg("<玩家>") { Options.onlinePlayer }
-        arg("<类型>") { SpawnerManager.getZygonSpawners().map { it.name } }
+        arg("<类型>") { SpawnerManager.getZygonSpawners().map { it.id } }
         arg("[数量]", Options.integer)
         exec {
             val target = findPlayer(0) ?: error("请输入玩家名")

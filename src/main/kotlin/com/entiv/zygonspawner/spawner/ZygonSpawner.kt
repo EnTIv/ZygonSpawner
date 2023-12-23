@@ -1,10 +1,16 @@
 package com.entiv.zygonspawner.spawner
 
+import com.entiv.core.common.debug.debug
 import com.entiv.core.common.debug.warn
 import com.entiv.zygonspawner.data.SpawnerData
 import org.bukkit.configuration.ConfigurationSection
+import org.bukkit.entity.Entity
 import org.bukkit.entity.EntityType
+import org.bukkit.entity.LivingEntity
 import kotlin.random.Random
+import kotlin.reflect.KClass
+import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.full.isSuperclassOf
 
 class ZygonSpawner(
     val id: String,
@@ -95,20 +101,31 @@ class ZygonSpawner(
         }
 
         private fun parseEntityWeights(spawnerType: String, stringList: List<String>): Map<EntityType, Double> {
-            val entityTypes = EntityType.values()
+            val entityTypes = EntityType.entries
             val entityWeights = mutableMapOf<EntityType, Double>()
 
             stringList.forEach {
                 val split = it.split(":")
-                val entityName = split[0]
-                val weight = split[1].toDouble()
 
-                val entityType = EntityType.fromName(entityName)
-                if (entityType != null) {
-                    entityWeights[entityType] = weight
-                } else {
-                    // 处理未知的实体类型
-                    warn("未知的实体类型: $entityName, 跳过此实体类型")
+                try {
+                    @Suppress("UNCHECKED_CAST")
+                    val clazz = Class.forName("org.bukkit.entity.${split[0]}").kotlin as KClass<out Entity>
+                    val weight = split[1].toDouble()
+
+                    for (entityType in entityTypes) {
+                        val entityKClass = entityType.entityClass?.kotlin ?: continue
+
+                        if (clazz.isSubclassOf(LivingEntity::class) && clazz.isSuperclassOf(entityKClass)) {
+                            entityWeights.merge(entityType, weight, Double::plus)
+
+                            debug("刷怪笼 $spawnerType 生物 $entityType 的权重为 $weight")
+                        }
+                    }
+                } catch (e: ClassNotFoundException) {
+                    // 处理类找不到的异常
+                    warn(
+                        "无法找到类 ${split[0]}，跳过此实体类型，你可以使用的类如下：AbstractHorse, AbstractSkeleton, AbstractVillager, Ageable, Allay, Ambient, Animals, ArmorStand, Axolotl, Bat, Bee, Blaze, Breedable, Breeze, Camel, Cat, CaveSpider, ChestedHorse, Chicken, Cod, ComplexLivingEntity, Cow, Creature, Creeper, Dolphin, Donkey, Drowned, ElderGuardian, EnderDragon, Enderman, Endermite, Enemy, Evoker, Fish, Flying, Fox, Frog, Ghast, Giant, GlowSquid, Goat, Golem, Guardian, Hoglin, Horse, HumanEntity, Husk, Illager, Illusioner, IronGolem, Llama, MagmaCube, Mob, Monster, Mule, MushroomCow, NPC, Ocelot, Panda, Parrot, Phantom, Pig, Piglin, PiglinAbstract, PiglinBrute, PigZombie, Pillager, Player, PolarBear, PufferFish, Rabbit, Raider, Ravager, Salmon, Sheep, Shulker, Silverfish, Skeleton, SkeletonHorse, Slime, Sniffer, Snowman, Spellcaster, Spider, Squid, Steerable, Stray, Strider, Tadpole, Tameable, TraderLlama, TropicalFish, Turtle, Vex, Villager, Vindicator, WanderingTrader, Warden, WaterMob, Witch, Wither, WitherSkeleton, Wolf, Zoglin, Zombie, ZombieHorse, ZombieVillager"
+                    )
                 }
             }
             return entityWeights

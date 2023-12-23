@@ -2,9 +2,8 @@
   动物刷怪笼:
     name: "<gold><bold>动物刷怪笼"
     lore:
-      - "<aqua>品质：<yellow>普通"
-      - "<aqua>刷怪次数：<yellow><var:totalCount>"
       - "<aqua>类型：<yellow><var:type>"
+      - "<aqua>刷怪次数：<yellow><var:totalCount>"
       - "<aqua>最小刷怪间隔：<yellow><var:minSpawnDelay>"
       - "<aqua>最大刷怪间隔：<yellow><var:maxSpawnDelay>"
       - "<aqua>生成数量：<yellow><var:spawnCount>"
@@ -34,13 +33,22 @@
   怪物刷怪笼:
     name: "<gold><bold>怪物刷怪笼"
     lore:
-      - "<aqua>品质：<yellow>高级"
-      - "<aqua>刷怪次数：<yellow><var:刷怪次数>"
-      - "<aqua>类型：<yellow><var:类型>"
-    刷怪次数: "100~500"
-    刷怪笼类型:
-      # 怪物的权重为 10
+      - "<aqua>类型：<yellow><var:type>"
+      - "<aqua>刷怪次数：<yellow><var:totalCount>"
+      - "<aqua>最小刷怪间隔：<yellow><var:minSpawnDelay>"
+      - "<aqua>最大刷怪间隔：<yellow><var:maxSpawnDelay>"
+      - "<aqua>生成数量：<yellow><var:spawnCount>"
+      - "<aqua>最大数量：<yellow><var:maxNearbyEntities>"
+      - "<aqua>激活范围：<yellow><var:requiredPlayerRange>"
+      - "<aqua>生成范围：<yellow><var:spawnRange>"
+    totalCount: "50~100"
+    minSpawnDelay: 200
+    maxSpawnDelay: 800
+    spawnCount: 4
+    maxNearbyEntities: 16
+    requiredPlayerRange: 16
+    spawnRange: 4
+    type:
       - "Monster:10"
-
 data:
   storage-method: h2
