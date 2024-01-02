@@ -52,3 +52,37 @@
       - "Monster:10"
 data:
   storage-method: h2
+
+# 刷怪笼增幅器，可自定义新增更多的增幅器
+booster-item:
+  简易增幅器:
+    type: "STONE"
+    name: "<gold><bold>刷怪次数增加器"
+    lore:
+      - "<aqua>可增加数量：<yellow><var:type>"
+    # 刷怪总次数 +50
+    totalCount: 50
+    # 最小刷怪间隔 -100
+    minSpawnDelay: -100
+    # 最大刷怪间隔 -100
+    maxSpawnDelay: -100
+    # 刷怪数 +1
+    spawnCount: 1
+    # 相似实体最大数量 +1
+    maxNearbyEntities: 1
+    # 激活距离 +1
+    requiredPlayerRange: 1
+    # 半径 -1
+    spawnRange: -1
+  高级增幅器:
+    type: "STONE"
+    name: "<gold><bold>刷怪次数增加器"
+    lore:
+      - "<aqua>可增加数量：<yellow><var:type>"
+    totalCount: 100
+    minSpawnDelay: -200
+    maxSpawnDelay: -200
+    spawnCount: 2
+    maxNearbyEntities: 16
+    requiredPlayerRange: 5
+    spawnRange: +2

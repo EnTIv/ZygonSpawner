@@ -3,25 +3,23 @@ package com.entiv.zygonspawner.data
 import com.entiv.core.common.kit.ItemBuilder
 import com.entiv.core.common.message.varTag
 import com.entiv.core.common.utils.translatable
+import com.entiv.zygonspawner.block.SpawnerBlockManager
 import com.entiv.zygonspawner.spawner.SpawnerManager
 import de.tr7zw.nbtapi.NBT
-import de.tr7zw.nbtapi.NBTTileEntity
 import de.tr7zw.nbtapi.iface.ReadWriteNBT
 import de.tr7zw.nbtapi.iface.ReadableNBT
-import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.MiniMessage
+import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.CreatureSpawner
-import org.bukkit.block.TileState
 import org.bukkit.entity.EntityType
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.BlockStateMeta
-import kotlin.math.max
 
 
 class SpawnerData(
-    val name: String,
-    val type: EntityType,
+    val id: String,
+    val spawnerType: EntityType,
     var totalCount: Int,
     val minSpawnDelay: Int,
     val maxSpawnDelay: Int,
@@ -40,8 +38,8 @@ class SpawnerData(
     private fun writeToNBT(nbt: ReadWriteNBT) {
         val compound = nbt.getOrCreateCompound("ZygonSpawner")
 
-        compound.setString("id", name)
-        compound.setString("type", type.name)
+        compound.setString("id", id)
+        compound.setString("type", spawnerType.name)
         compound.setInteger("totalCount", totalCount)
         compound.setInteger("minSpawnDelay", minSpawnDelay)
         compound.setInteger("maxSpawnDelay", maxSpawnDelay)
@@ -49,19 +47,21 @@ class SpawnerData(
         compound.setInteger("maxNearbyEntities", maxNearbyEntities)
         compound.setInteger("requiredPlayerRange", requiredPlayerRange)
         compound.setInteger("spawnRange", spawnRange)
-
     }
 
     fun toItemStack(): ItemStack {
-        val zygonSpawner = SpawnerManager.findZygonSpawner(name) ?: error("无法获取到刷怪笼 $name")
+        val zygonSpawner = SpawnerManager.findZygonSpawner(id) ?: error("无法获取到刷怪笼 $id")
         val miniMessage = MiniMessage.miniMessage()
-        val name = miniMessage.deserialize(zygonSpawner.name, varTag("totalCount", totalCount, "type", type.translatable()))
+        val name = miniMessage.deserialize(
+            zygonSpawner.name,
+            varTag("totalCount", totalCount, "type", spawnerType.translatable())
+        )
         val lore = zygonSpawner.lore.map {
             miniMessage.deserialize(
                 it,
                 varTag(
                     "totalCount", totalCount,
-                    "type", type.translatable(),
+                    "type", spawnerType.translatable(),
                     "minSpawnDelay", minSpawnDelay,
                     "maxSpawnDelay", maxSpawnDelay,
                     "spawnCount", spawnCount,
@@ -81,7 +81,7 @@ class SpawnerData(
         val blockStateMeta = itemMeta as BlockStateMeta
         val creatureSpawner = blockStateMeta.blockState as CreatureSpawner
 
-        creatureSpawner.spawnedType = type
+        creatureSpawner.spawnedType = spawnerType
         creatureSpawner.minSpawnDelay = minSpawnDelay
         creatureSpawner.maxSpawnDelay = maxSpawnDelay
         creatureSpawner.spawnCount = spawnCount
@@ -122,7 +122,36 @@ class SpawnerData(
         fun fromItemStack(itemStack: ItemStack): SpawnerData? =
             fromNBT(NBT.readNbt(itemStack))
 
-        fun fromBlockState(state: TileState): SpawnerData? =
-            fromNBT(NBTTileEntity(state))
+        fun fromLocation(location: Location): SpawnerData? {
+            val world = location.world
+            val block = world.getBlockAt(location).state as? CreatureSpawner ?: return null
+
+            return fromSpawner(block)
+        }
+
+        fun fromSpawner(createSpawner: CreatureSpawner): SpawnerData {
+            val spawnerType = createSpawner.spawnedType
+            val minSpawnDelay = createSpawner.minSpawnDelay
+            val maxSpawnDelay = createSpawner.maxSpawnDelay
+            val spawnCount = createSpawner.spawnCount
+            val maxNearbyEntities = createSpawner.maxNearbyEntities
+            val requiredPlayerRange = createSpawner.requiredPlayerRange
+            val spawnRange = createSpawner.spawnRange
+            val spawnerBlock = SpawnerBlockManager.findSpawnerBlock(createSpawner.location)!!
+            val id = spawnerBlock.spawnerData.id
+            val totalCount = spawnerBlock.spawnerData.totalCount
+
+            return SpawnerData(
+                id = id,
+                spawnerType = spawnerType,
+                minSpawnDelay = minSpawnDelay,
+                maxSpawnDelay = maxSpawnDelay,
+                spawnCount = spawnCount,
+                maxNearbyEntities = maxNearbyEntities,
+                requiredPlayerRange = requiredPlayerRange,
+                spawnRange = spawnRange,
+                totalCount = totalCount
+            )
+        }
     }
 }

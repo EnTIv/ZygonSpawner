@@ -29,6 +29,7 @@ dependencies {
     implementation("com.entiv.InsekiCore:module-common:$coreVersion")
     implementation("com.entiv.InsekiCore:module-command:$coreVersion")
     implementation("com.entiv.InsekiCore:module-exposed:$coreVersion")
+    implementation("com.entiv.InsekiCore:module-menu:$coreVersion")
 
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:${getKotlinPluginVersion()}")
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${getKotlinPluginVersion()}")

@@ -2,6 +2,7 @@ package com.entiv.zygonspawner.block
 
 import com.entiv.core.common.debug.debug
 import com.entiv.core.common.kit.submit
+import com.entiv.core.common.message.sendInfoMessage
 import com.entiv.core.common.module.PluginModule
 import com.entiv.zygonspawner.data.SpawnerData
 import com.entiv.zygonspawner.storage.SpawnerBlockDao
@@ -13,6 +14,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.SpawnerSpawnEvent
+import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.world.WorldSaveEvent
 
 object SpawnerBlockManager : PluginModule, Listener {
@@ -40,7 +42,6 @@ object SpawnerBlockManager : PluginModule, Listener {
         val block = event.block
         val spawnerBlock = SpawnerBlock(spawnerData, block.location)
 
-        debug("已放置刷怪笼")
         spawnerBlocks[block.location] = spawnerBlock
     }
 
@@ -65,11 +66,19 @@ object SpawnerBlockManager : PluginModule, Listener {
 
         if (data.totalCount <= 0) {
             event.isCancelled = true
-            debug("刷怪计数: ${data.totalCount}")
             submit {
                 event.spawner.block.type = Material.AIR
             }
         }
+    }
+
+    @EventHandler
+    private fun onInteract(event: PlayerInteractEvent) {
+        val clickedBlock = event.clickedBlock ?: return
+        val spawner = findSpawnerBlock(clickedBlock.location) ?: return
+        val player = event.player
+
+        player.sendInfoMessage("刷怪笼剩余刷怪次数: %0", spawner.totalCount)
     }
 
     @EventHandler

@@ -42,8 +42,8 @@ class SpawnerBlockEntity(id: EntityID<Int>) : IntEntity(id) {
         }
 
         val spawnerData = SpawnerData(
-            name = name,
-            type = type,
+            id = name,
+            spawnerType = type,
             totalCount = totalCount,
             minSpawnDelay = spawner.minSpawnDelay,
             maxSpawnDelay = spawner.maxSpawnDelay,
@@ -63,7 +63,7 @@ class SpawnerBlockEntity(id: EntityID<Int>) : IntEntity(id) {
 
         fun create(spawnerBlock: SpawnerBlock): SpawnerBlockEntity {
             return SpawnerBlockEntity.new {
-                this.name = spawnerBlock.name
+                this.name = spawnerBlock.id
                 this.type = spawnerBlock.type
                 this.totalCount = spawnerBlock.totalCount
                 this.location = spawnerBlock.location
