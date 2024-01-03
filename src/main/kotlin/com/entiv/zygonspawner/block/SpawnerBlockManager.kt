@@ -5,6 +5,7 @@ import com.entiv.core.common.kit.submit
 import com.entiv.core.common.message.sendInfoMessage
 import com.entiv.core.common.module.PluginModule
 import com.entiv.zygonspawner.data.SpawnerData
+import com.entiv.zygonspawner.menu.SpawnerInfo
 import com.entiv.zygonspawner.storage.SpawnerBlockDao
 import org.bukkit.Bukkit
 import org.bukkit.Location
@@ -78,7 +79,7 @@ object SpawnerBlockManager : PluginModule, Listener {
         val spawner = findSpawnerBlock(clickedBlock.location) ?: return
         val player = event.player
 
-        player.sendInfoMessage("刷怪笼剩余刷怪次数: %0", spawner.totalCount)
+        SpawnerInfo(spawner.spawnerData).open(player)
     }
 
     @EventHandler

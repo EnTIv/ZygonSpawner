@@ -19,6 +19,8 @@ repositories {
     maven { url = uri("https://repo.playeranalytics.net/releases") }
     maven { url = uri("https://repo.codemc.org/repository/maven-public/") }
     maven { url = uri("https://repo.purpurmc.org/snapshots") }
+    maven { url = uri("https://repo.xenondevs.xyz/releases") }
+
 }
 
 val exposedVersion = "0.40.1"
@@ -29,8 +31,13 @@ dependencies {
     implementation("com.entiv.InsekiCore:module-common:$coreVersion")
     implementation("com.entiv.InsekiCore:module-command:$coreVersion")
     implementation("com.entiv.InsekiCore:module-exposed:$coreVersion")
-    implementation("com.entiv.InsekiCore:module-menu:$coreVersion")
 
+    implementation("com.entiv.InsekiCore:module-menu:$coreVersion")
+    implementation("xyz.xenondevs.invui:invui:1.14")
+    implementation("xyz.xenondevs.invui:invui-kotlin:1.14") {
+        exclude(group = "org.jetbrains.kotlin")
+        exclude(group = "org.jetbrains", module = "annotations")
+    }
     compileOnly("org.jetbrains.kotlin:kotlin-reflect:${getKotlinPluginVersion()}")
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${getKotlinPluginVersion()}")
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
