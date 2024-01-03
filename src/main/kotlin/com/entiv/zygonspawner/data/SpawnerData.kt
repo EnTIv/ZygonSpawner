@@ -97,6 +97,10 @@ class SpawnerData(
         return itemStack
     }
 
+    fun toItemStack(amount: Int): ItemStack {
+        return ItemBuilder(toItemStack()).amount(amount).build()
+    }
+
     companion object {
 
         private fun fromNBT(nbt: ReadableNBT): SpawnerData? {

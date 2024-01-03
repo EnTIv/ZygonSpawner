@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack
 interface Booster {
     val id: String
 
-    val itemStack: ItemStack
+    fun getItemStack(): ItemStack
 
     fun onInteract(event: PlayerInteractEvent, itemStack: ItemStack, spawnerBlock: SpawnerBlock)
 }

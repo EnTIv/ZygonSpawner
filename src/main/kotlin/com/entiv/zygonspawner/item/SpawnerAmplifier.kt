@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack
 
 class SpawnerAmplifier(
     override val id: String,
-    override val itemStack: ItemStack,
+    private val itemStack: ItemStack,
 
     val totalCount: Int,
     val minSpawnDelay: Int,
@@ -20,6 +20,10 @@ class SpawnerAmplifier(
     val requiredPlayerRange: Int,
     val spawnRange: Int
 ) : Booster {
+
+    override fun getItemStack(): ItemStack {
+        return itemStack.clone()
+    }
 
     override fun onInteract(event: PlayerInteractEvent, itemStack: ItemStack, spawnerBlock: SpawnerBlock) {
 

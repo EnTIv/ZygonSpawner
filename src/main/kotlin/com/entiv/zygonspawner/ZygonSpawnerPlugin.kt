@@ -14,7 +14,7 @@ class ZygonSpawnerPlugin : InsekiPlugin() {
         sendAdvertisement(true)
 
         DefaultCommand.register()
-        GiveCommand.give.register()
+        GiveCommand.register()
 
         ModuleManager.load(ExposedManager)
         ModuleManager.load(SpawnerManager)

@@ -21,6 +21,10 @@ object BoosterManager : PluginModule, Listener {
         boosters.clear()
     }
 
+    fun getBoosters() = boosters.values
+
+    fun findBooster(id: String) = boosters[id]
+
     @EventHandler
     private fun onInteract(event: PlayerInteractEvent) {
         val clickedBlock = event.clickedBlock ?: return
@@ -34,7 +38,7 @@ object BoosterManager : PluginModule, Listener {
 
     fun findItem(itemStack: ItemStack): Booster? {
         boosters.values.forEach {
-            if (it.itemStack.isSimilar(itemStack)) {
+            if (it.getItemStack().isSimilar(itemStack)) {
                 return it
             }
         }
