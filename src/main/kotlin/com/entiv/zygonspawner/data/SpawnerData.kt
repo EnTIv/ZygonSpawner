@@ -3,13 +3,11 @@ package com.entiv.zygonspawner.data
 import com.entiv.core.common.kit.ItemBuilder
 import com.entiv.core.common.message.varTag
 import com.entiv.core.common.utils.translatable
-import com.entiv.zygonspawner.block.SpawnerBlockManager
 import com.entiv.zygonspawner.spawner.SpawnerManager
 import de.tr7zw.nbtapi.NBT
 import de.tr7zw.nbtapi.iface.ReadWriteNBT
 import de.tr7zw.nbtapi.iface.ReadableNBT
 import net.kyori.adventure.text.minimessage.MiniMessage
-import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.CreatureSpawner
 import org.bukkit.entity.EntityType
@@ -126,14 +124,7 @@ class SpawnerData(
         fun fromItemStack(itemStack: ItemStack): SpawnerData? =
             fromNBT(NBT.readNbt(itemStack))
 
-        fun fromLocation(location: Location): SpawnerData? {
-            val world = location.world
-            val block = world.getBlockAt(location).state as? CreatureSpawner ?: return null
-
-            return fromSpawner(block)
-        }
-
-        fun fromSpawner(createSpawner: CreatureSpawner): SpawnerData {
+        fun fromSpawnerBlock(spawnerData: SpawnerData, createSpawner: CreatureSpawner): SpawnerData {
             val spawnerType = createSpawner.spawnedType
             val minSpawnDelay = createSpawner.minSpawnDelay
             val maxSpawnDelay = createSpawner.maxSpawnDelay
@@ -141,9 +132,8 @@ class SpawnerData(
             val maxNearbyEntities = createSpawner.maxNearbyEntities
             val requiredPlayerRange = createSpawner.requiredPlayerRange
             val spawnRange = createSpawner.spawnRange
-            val spawnerBlock = SpawnerBlockManager.findSpawnerBlock(createSpawner.location)!!
-            val id = spawnerBlock.spawnerData.id
-            val totalCount = spawnerBlock.spawnerData.totalCount
+            val id = spawnerData.id
+            val totalCount = spawnerData.totalCount
 
             return SpawnerData(
                 id = id,

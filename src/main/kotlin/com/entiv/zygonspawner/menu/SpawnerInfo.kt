@@ -18,4 +18,5 @@ class SpawnerInfo(private val spawnerData: SpawnerData) : SimpleMenu() {
 
         gui.fillRow(0, backgroundItem, false)
     }
+
 }

@@ -1,11 +1,13 @@
 package com.entiv.zygonspawner.storage
 
+import com.entiv.core.common.debug.debug
 import com.entiv.core.exposed.defaultTableName
 import com.entiv.core.exposed.entityType
 import com.entiv.core.exposed.location
 import com.entiv.core.exposed.transaction
 import com.entiv.zygonspawner.block.SpawnerBlock
 import com.entiv.zygonspawner.data.SpawnerData
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.block.CreatureSpawner
 import org.jetbrains.exposed.dao.IntEntity
@@ -52,7 +54,6 @@ class SpawnerBlockEntity(id: EntityID<Int>) : IntEntity(id) {
             requiredPlayerRange = spawner.requiredPlayerRange,
             spawnRange = spawner.spawnRange
         )
-
         return SpawnerBlock(spawnerData, location)
     }
 
@@ -90,26 +91,36 @@ object SpawnerBlockDao {
     fun find(location: Location): CompletableFuture<SpawnerBlock?> {
         return CompletableFuture.supplyAsync {
             transaction {
-                SpawnerBlockEntity.find(location)?.toSpawnerBlock()
+                val spawnerBlockEntity = SpawnerBlockEntity.find(location) ?: return@transaction null
+                return@transaction spawnerBlockEntity.toSpawnerBlock()
             }
+        }.exceptionally {
+            it.printStackTrace()
+            null
         }
     }
 
-    fun loadAll(): CompletableFuture<Collection<SpawnerBlock>> {
+    fun loadAll(): CompletableFuture<List<SpawnerBlock>> {
         return CompletableFuture.supplyAsync {
             transaction {
                 SpawnerBlockEntity.all().mapNotNull {
                     it.toSpawnerBlock()
                 }
             }
+        }.exceptionally {
+            it.printStackTrace()
+            null
         }
     }
 
-    fun save(spawnerBlock: SpawnerBlock): CompletableFuture<SpawnerBlockEntity> {
+    fun save(spawnerBlock: SpawnerBlock): CompletableFuture<SpawnerBlockEntity?> {
         return CompletableFuture.supplyAsync {
             transaction {
                 SpawnerBlockEntity.save(spawnerBlock)
             }
+        }.exceptionally {
+            it.printStackTrace()
+            null
         }
     }
 
@@ -120,6 +131,8 @@ object SpawnerBlockDao {
                     SpawnerBlockEntity.save(it)
                 }
             }
+        }.exceptionally {
+            it.printStackTrace()
         }
     }
 }

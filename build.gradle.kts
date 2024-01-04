@@ -32,8 +32,8 @@ dependencies {
     implementation("com.entiv.InsekiCore:module-command:$coreVersion")
     implementation("com.entiv.InsekiCore:module-exposed:$coreVersion")
     implementation("com.entiv.InsekiCore:module-menu:$coreVersion")
-    implementation("xyz.xenondevs.invui:invui:1.14")
-    implementation("xyz.xenondevs.invui:invui-kotlin:1.14") {
+    implementation("xyz.xenondevs.invui:invui:1.24")
+    implementation("xyz.xenondevs.invui:invui-kotlin:1.24") {
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains", module = "annotations")
     }

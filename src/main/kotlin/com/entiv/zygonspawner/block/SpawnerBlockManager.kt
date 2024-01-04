@@ -1,12 +1,12 @@
 package com.entiv.zygonspawner.block
 
-import com.entiv.core.common.debug.debug
 import com.entiv.core.common.kit.submit
-import com.entiv.core.common.message.sendInfoMessage
 import com.entiv.core.common.module.PluginModule
+import com.entiv.core.exposed.transaction
 import com.entiv.zygonspawner.data.SpawnerData
 import com.entiv.zygonspawner.menu.SpawnerInfo
 import com.entiv.zygonspawner.storage.SpawnerBlockDao
+import com.entiv.zygonspawner.storage.SpawnerBlockEntity
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -17,22 +17,19 @@ import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.SpawnerSpawnEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.world.WorldSaveEvent
+import org.bukkit.inventory.EquipmentSlot
+import org.bukkit.inventory.MainHand
 
 object SpawnerBlockManager : PluginModule, Listener {
 
-    private val spawnerBlocks = mutableMapOf<Location, SpawnerBlock>()
+    private val spawnerBlocks = mutableMapOf<Location, SpawnerBlock?>()
 
     override fun onEnable() {
-        SpawnerBlockDao.loadAll().thenAccept {
-            it.forEach { spawnerBlock ->
 
-                spawnerBlocks[spawnerBlock.location] = spawnerBlock
-            }
-        }
     }
 
     override fun onDisable() {
-        SpawnerBlockDao.save(spawnerBlocks.values).join()
+        SpawnerBlockDao.save(spawnerBlocks.values.filterNotNull()).join()
         spawnerBlocks.clear()
     }
 
@@ -60,12 +57,11 @@ object SpawnerBlockManager : PluginModule, Listener {
 
     @EventHandler(ignoreCancelled = true)
     private fun onSummon(event: SpawnerSpawnEvent) {
-        val spawner = findSpawnerBlock(event.spawner.location) ?: return
-        val data = spawner.spawnerData
+        val location = event.spawner.location
+        val spawner = findSpawnerBlock(location) ?: return
+        spawner.totalCount -= 1
 
-        data.totalCount -= 1
-
-        if (data.totalCount <= 0) {
+        if (spawner.totalCount <= 0) {
             event.isCancelled = true
             submit {
                 event.spawner.block.type = Material.AIR
@@ -76,8 +72,12 @@ object SpawnerBlockManager : PluginModule, Listener {
     @EventHandler
     private fun onInteract(event: PlayerInteractEvent) {
         val clickedBlock = event.clickedBlock ?: return
-        val spawner = findSpawnerBlock(clickedBlock.location) ?: return
+        if (event.hand != EquipmentSlot.HAND) {
+            return
+        }
+
         val player = event.player
+        val spawner = findSpawnerBlock(clickedBlock.location) ?: return
 
         SpawnerInfo(spawner.spawnerData).open(player)
     }
@@ -85,11 +85,15 @@ object SpawnerBlockManager : PluginModule, Listener {
     @EventHandler
     private fun onWorldSave(event: WorldSaveEvent) {
         if (event.world == Bukkit.getWorlds().first()) {
-            SpawnerBlockDao.save(spawnerBlocks.values)
+            SpawnerBlockDao.save(spawnerBlocks.values.filterNotNull())
         }
     }
 
     fun findSpawnerBlock(location: Location): SpawnerBlock? {
-        return spawnerBlocks[location]
+        return spawnerBlocks.getOrPut(location) {
+            transaction {
+                SpawnerBlockEntity.find(location)?.toSpawnerBlock()
+            }
+        }
     }
 }

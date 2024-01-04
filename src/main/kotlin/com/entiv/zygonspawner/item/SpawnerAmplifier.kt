@@ -2,7 +2,10 @@ package com.entiv.zygonspawner.item
 
 import com.entiv.core.common.debug.debug
 import com.entiv.core.common.kit.ItemBuilder
+import com.entiv.core.common.message.sendSuccessMessage
 import com.entiv.core.common.message.sendWarnMessage
+import com.entiv.core.common.message.varTag
+import com.entiv.core.common.utils.translatable
 import com.entiv.zygonspawner.block.SpawnerBlock
 import org.bukkit.configuration.ConfigurationSection
 import org.bukkit.event.player.PlayerInteractEvent
@@ -26,7 +29,6 @@ class SpawnerAmplifier(
     }
 
     override fun onInteract(event: PlayerInteractEvent, itemStack: ItemStack, spawnerBlock: SpawnerBlock) {
-
         val spawner = spawnerBlock.spawner
         val player = event.player
 
@@ -80,26 +82,29 @@ class SpawnerAmplifier(
         spawner.spawnRange = newSpawnRange
         spawnerBlock.totalCount += totalCount
 
+        spawner.update()
+        event.isCancelled = true
         itemStack.amount -= 1
+
+        player.sendSuccessMessage("$id 使用成功!")
     }
 
     companion object {
 
         fun registerFromSection(section: ConfigurationSection) {
-            section.getKeys(false)
-                .forEach {
-                    val itemSection = section.getConfigurationSection(it)!!
-                    val itemBooster = fromSection(itemSection)
 
-                    BoosterManager.registerItem(itemBooster)
-                    debug("已注册 ${section.name} 道具")
-                }
+            section.getKeys(false).forEach {
+
+                val itemSection = section.getConfigurationSection(it)!!
+                val itemBooster = fromSection(itemSection)
+
+                BoosterManager.registerItem(itemBooster)
+                debug("已注册 ${itemSection.name} 刷怪笼增幅器")
+            }
         }
 
         fun fromSection(section: ConfigurationSection): SpawnerAmplifier {
             val id = section.name
-            val itemStack = ItemBuilder(section).amount(1).build()
-
             val totalCount = section.getInt("totalCount", 0)
             val minSpawnDelay = section.getInt("minSpawnDelay", 0)
             val maxSpawnDelay = section.getInt("maxSpawnDelay", 0)
@@ -107,6 +112,18 @@ class SpawnerAmplifier(
             val maxNearbyEntities = section.getInt("maxNearbyEntities", 0)
             val requiredPlayerRange = section.getInt("requiredPlayerRange", 0)
             val spawnRange = section.getInt("spawnRange", 0)
+
+            val varTag = varTag(
+                "totalCount", totalCount,
+                "minSpawnDelay", minSpawnDelay,
+                "maxSpawnDelay", maxSpawnDelay,
+                "spawnCount", spawnCount,
+                "maxNearbyEntities", maxNearbyEntities,
+                "requiredPlayerRange", requiredPlayerRange,
+                "spawnRange", spawnRange
+            )
+
+            val itemStack = ItemBuilder(section, varTag).amount(1).build()
 
             return SpawnerAmplifier(
                 id,

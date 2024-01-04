@@ -27,7 +27,7 @@ object GiveCommand {
             val itemStack = zygonSpawner.generateData().toItemStack(amount)
             target.inventory.addItem(itemStack)
 
-            sender.sendSuccessMessage("给予玩家 ${target.name} 刷怪笼 ${zygonSpawner.id} $amount 个成功")
+            sender.sendSuccessMessage("给予玩家 %0 刷怪笼 %1 数量 %2 个成功", target.name, zygonSpawner.id, amount)
         }
     }
 
@@ -48,7 +48,7 @@ object GiveCommand {
             val itemStack = booster.getItemStack()
             target.inventory.addItem(itemStack)
 
-            sender.sendSuccessMessage("给予玩家 ${target.name} 刷怪笼 ${booster.id} $amount 个成功")
+            sender.sendSuccessMessage("给予玩家 %0 刷怪笼增幅器 %1 数量 %2 个成功", target.name, booster.id, amount)
         }
     }
 
