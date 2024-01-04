@@ -1,6 +1,7 @@
 package com.entiv.zygonspawner.storage
 
 import com.entiv.core.common.debug.debug
+import com.entiv.core.common.plugin.config
 import com.entiv.core.exposed.defaultTableName
 import com.entiv.core.exposed.entityType
 import com.entiv.core.exposed.location
@@ -38,7 +39,7 @@ class SpawnerBlockEntity(id: EntityID<Int>) : IntEntity(id) {
             return null
         }
 
-        if (totalCount <= 0) {
+        if (totalCount <= 0 && config.getBoolean("consume", false)) {
             delete()
             return null
         }

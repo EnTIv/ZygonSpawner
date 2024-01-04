@@ -1,6 +1,8 @@
 debug: false
 # 当刷怪次数为 0 时是否移除刷怪笼
 consume: true
+data:
+  storage-method: h2
 
 刷怪笼:
   动物刷怪笼:
@@ -54,8 +56,6 @@ consume: true
     spawnRange: 4
     type:
       - "Monster:10"
-data:
-  storage-method: h2
 
 # 刷怪笼增幅器，可自定义新增更多的增幅器
 booster-item:
