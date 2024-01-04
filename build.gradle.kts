@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.entiv"
-version = "1.0.1"
+version = "1.0.2"
 
 repositories {
     mavenLocal()
@@ -31,7 +31,6 @@ dependencies {
     implementation("com.entiv.InsekiCore:module-common:$coreVersion")
     implementation("com.entiv.InsekiCore:module-command:$coreVersion")
     implementation("com.entiv.InsekiCore:module-exposed:$coreVersion")
-
     implementation("com.entiv.InsekiCore:module-menu:$coreVersion")
     implementation("xyz.xenondevs.invui:invui:1.14")
     implementation("xyz.xenondevs.invui:invui-kotlin:1.14") {
@@ -58,6 +57,9 @@ tasks.shadowJar {
     archiveFileName.set("${project.name}-${project.version}.jar")
     relocate("com.entiv.core", "${project.group}.${project.name.toLowerCase()}.lib.core")
     println("导出路径: ${destinationDirectory.get()}")
+
+    exclude("org/intellij/lang/annotations/**")
+    exclude("org/jetbrains/annotations/")
 }
 
 tasks.test {
