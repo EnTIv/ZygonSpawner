@@ -4,12 +4,40 @@ import com.entiv.core.command.DefaultCommand
 import com.entiv.core.command.Options
 import com.entiv.core.command.command
 import com.entiv.core.common.message.sendSuccessMessage
-import com.entiv.zygonspawner.item.Booster
 import com.entiv.zygonspawner.item.BoosterManager
 import com.entiv.zygonspawner.spawner.SpawnerManager
+import com.entiv.zygonspawner.storage.SpawnerBlockEntity
+import org.bukkit.Material
+import org.bukkit.block.CreatureSpawner
+import org.jetbrains.exposed.sql.transactions.transaction
 
-// /ZygonSpawner give 类型 数量 玩家
-object GiveCommand {
+object BaseCommand {
+
+    val uninstall = command("uninstall") {
+        description = "删除所有自定义刷怪笼"
+        parent(DefaultCommand.root)
+        var lastExecutionTime: Long? = null
+        exec {
+            val currentTime = System.currentTimeMillis()
+            val second = 5
+
+            if (lastExecutionTime != null && currentTime - lastExecutionTime!! <= second * 1000) {
+                transaction {
+                    val spawnerBlockEntities = SpawnerBlockEntity.all()
+                    spawnerBlockEntities.forEach {
+                        val block = it.location.block
+                        if (block.state !is CreatureSpawner) return@forEach
+                        block.type = Material.AIR
+                    }
+                    tellSuccess("已经移除了 %0 个自定义刷怪笼", spawnerBlockEntities.count())
+                }
+                lastExecutionTime = null
+            } else {
+                lastExecutionTime = currentTime
+                tellWarn("请在 %0 秒内再次执行命令以确认删除所有刷怪笼", second)
+            }
+        }
+    }
 
     val giveSpawner = command("give-spawner") {
         description = "给予玩家指定类型的刷怪笼"
@@ -53,6 +81,7 @@ object GiveCommand {
     }
 
     fun register() {
+        uninstall.register()
         giveBooster.register()
         giveSpawner.register()
     }

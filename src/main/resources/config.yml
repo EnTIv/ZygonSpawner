@@ -1,3 +1,7 @@
+debug: false
+# 当刷怪次数为 0 时是否移除刷怪笼
+consume: true
+
 刷怪笼:
   动物刷怪笼:
     name: "<gold><bold>动物刷怪笼"
@@ -55,9 +59,9 @@ data:
 
 # 刷怪笼增幅器，可自定义新增更多的增幅器
 booster-item:
-  简易增幅器:
+  初级增幅器:
     type: "GOLD_NUGGET"
-    name: "<gold><bold>刷怪次数增加器"
+    name: "<gold><bold>初级增幅器"
     lore:
       - "<aqua>刷怪次数 <yellow><var:totalCount>"
       - "<aqua>最小刷怪间隔 <yellow><var:minSpawnDelay>"
@@ -80,4 +84,22 @@ booster-item:
     requiredPlayerRange: 1
     # 半径 -1
     spawnRange: -1
+  高级增幅器:
+    type: "GOLD_NUGGET"
+    name: "<gold><bold>高级增幅器"
+    lore:
+      - "<aqua>刷怪次数 <yellow><var:totalCount>"
+      - "<aqua>最小刷怪间隔 <yellow><var:minSpawnDelay>"
+      - "<aqua>最大刷怪间隔 <yellow><var:maxSpawnDelay>"
+      - "<aqua>生成数量 <yellow><var:spawnCount>"
+      - "<aqua>最大数量 <yellow><var:maxNearbyEntities>"
+      - "<aqua>激活范围 <yellow><var:requiredPlayerRange>"
+      - "<aqua>生成范围 <yellow><var:spawnRange>"
+    totalCount: 100
+    minSpawnDelay: -200
+    maxSpawnDelay: -200
+    spawnCount: 1
+    maxNearbyEntities: 2
+    requiredPlayerRange: 2
+    spawnRange: -2
   # 可增加更多增幅器配置，在下面新增即可
